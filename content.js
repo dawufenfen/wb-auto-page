@@ -22,43 +22,53 @@ function clearCommit() {
   console.log("清理完成");
 }
 //获取数据的方法
-function getMore(newButton) {
+function getMore(newButton, cb) {
   getMoreButton = newButton;
   i++;
   getMoreButton.click();
   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  cb && cb(i);
   console.log("第" + i + "次");
 }
-//开始爬楼
-function begin() {
-  stopFlag = 0;
-  timeId = setInterval(() => {
-    newGetMoreButton = document.getElementsByClassName("WB_cardmore")[0];
-    if (!newGetMoreButton) {
-      if (commitNumber >= listBox.children[0].childElementCount) {
-        continueRun();
-      } else {
-        clearInterval(timeId);
-        audio.play(); //播放提示音乐，如果不想播放，把这一行删除
-        alert("找不到加载更多按钮，请看看是不是翻到沙发了");
-      }
+function handleBegin(cb) {
+  newGetMoreButton = document.getElementsByClassName("WB_cardmore")[0];
+  if (!newGetMoreButton) {
+    if (commitNumber > listBox.children[0].childElementCount) {
+      continueRun(cb);
     } else {
-      commitNumber = listBox.children[0].childElementCount;
-      getMore(newGetMoreButton);
-    }
-    if (stopFlag) {
       clearInterval(timeId);
+      audio.play(); //播放提示音乐，如果不想播放，把这一行删除
+      alert("找不到加载更多按钮，请看看是不是翻到沙发了");
     }
-  }, 1000); //这里是设置每1000ms一次查询
+  } else {
+    commitNumber = listBox.children[0].childElementCount;
+    getMore(newGetMoreButton, cb);
+  }
+  if (stopFlag) {
+    clearInterval(timeId);
+  }
+}
+//开始爬楼
+function begin(cb) {
+  stopFlag = 0;
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  setTimeout(() => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }, 1000);
+  setTimeout(() => {
+    timeId = setInterval(() => {
+      handleBegin(cb);
+    }, 1000); //这里是设置每1000ms一次查询
+  }, 1000);
 }
 //恢复错误数据导致的爬楼错误
-function continueRun() {
+function continueRun(cb) {
   console.log("请求返回错误，自动修复");
   i--;
   clearInterval(timeId);
   listBox.children[0].appendChild(getMoreButton);
-  getMore(getMoreButton);
-  begin();
+  getMore(getMoreButton, cb);
+  begin(cb);
 }
 //停止爬楼
 function stop() {
@@ -78,22 +88,26 @@ function init() {
   listBox = document.getElementsByClassName("list_box")[0];
   commitNumber = listBox.children[0].childElementCount;
 }
+
+const sendRequest = (i) => {
+  chrome.runtime.sendMessage({ action: "updateTime", time: i });
+};
 // 事件和消息
-chrome.extension.onRequest.addListener(function (request, sender, sendRequest) {
+chrome.extension.onRequest.addListener(function (request, sender, cb) {
   // 触发不同的功能
   switch (request.action) {
     case "begin":
       init();
-      begin();
+      begin(sendRequest);
       break;
     case "stop":
       stop();
       break;
     case "continue":
-      begin();
+      begin(sendRequest);
       break;
     case "reContinue":
-      continueRun();
+      continueRun(sendRequest);
       break;
     case "stopMusic":
       stopMusic();
@@ -104,4 +118,5 @@ chrome.extension.onRequest.addListener(function (request, sender, sendRequest) {
     default:
       console.log("null action");
   }
+  cb && cb();
 });

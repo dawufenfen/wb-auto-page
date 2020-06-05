@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "大雾的微博自动翻沙发小插件",
   "manifest_version": 2,
-  "permissions": ["activeTab", "declarativeContent", "tabs"],
+  "permissions": ["declarativeContent", "tabs"],
   "background": {
     "scripts": ["background.js"]
   },
@@ -11,7 +11,7 @@
     "default_icon": "images/icon.png",
     "default_popup": "popup.html"
   },
-  "content_scripts": [{ "matches": ["*://*/*"], "js": ["content.js"] }],
+  "content_scripts": [{ "matches": ["*://weibo.com/*"], "js": ["content.js"] }],
   "icons": {
     "16": "images/icon.png",
     "32": "images/icon.png",

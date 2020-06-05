@@ -16,18 +16,50 @@
             border: 1px solid #ccc;
             background-color: #fff;
             outline: none;
+            cursor: pointer;
+        }
+
+        button:focus,
+        button:active,
+        button:hover {
+            border-color: #40A9FF;
+            color: #40A9FF;
+        }
+
+        #begin {
+            font-size: 16px;
+            color: #fff;
+            background: #1890ff;
+            border-color: #1890ff;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
+            -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, .045);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, .045);
+        }
+
+        #begin:hover,
+        #begin:active,
+        #begin:focus {
+            color: #fff;
+            background: #40a9ff;
+            border-color: #40a9ff;
         }
     </style>
 </head>
 
 <body>
     <div class="wrap">
-        <button id="begin">开始</button>
-        <button id="stop">暂停</button>
-        <button id="continue">继续</button>
-        <button id="reContinue">不是沙发，继续爬</button>
-        <button id="clearCommit">清理现有的评论</button>
-        <button id="stopMusic">停止音乐</button>
+        <div id="content"></div>
+        <div>
+            <button id="begin">开始</button>
+            <button id="stop">暂停</button>
+            <button id="continue">继续</button>
+        </div>
+        <div>
+            <button id="reContinue">不是沙发，继续爬</button>
+        </div>
+        <div> <button id="clearCommit">清理现有的评论</button>
+        </div>
+        <div><button id="stopMusic">停止音乐</button></div>
         <script src="popup.js"></script>
     </div>
 </body>

@@ -3,7 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let beginButton = document.getElementById("begin");
   beginButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
-      chrome.tabs.sendRequest(tab.id, { action: "begin" }, () => {});
+      chrome.tabs.sendRequest(
+        tab.id,
+        { action: "begin", tabId: tab.id },
+        () => {}
+      );
     });
   };
 
@@ -17,7 +21,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let continueButton = document.getElementById("continue");
   continueButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
-      chrome.tabs.sendRequest(tab.id, { action: "continue" }, () => {});
+      chrome.tabs.sendRequest(
+        tab.id,
+        { action: "continue", tabId: tab.id },
+        () => {}
+      );
     });
   };
 
@@ -41,4 +49,12 @@ document.addEventListener("DOMContentLoaded", function () {
       chrome.tabs.sendRequest(tab.id, { action: "stopMusic" }, () => {});
     });
   };
+
+  chrome.runtime.onMessage.addListener(function (request, sender) {
+    // 触发不同的功能
+    if (request.action === "updateTime") {
+      document.getElementById("content").textContent =
+        "已爬取" + request.time + "次";
+    }
+  });
 });
