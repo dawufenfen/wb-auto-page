@@ -88,10 +88,22 @@ function init() {
   listBox = document.getElementsByClassName("list_box")[0];
   commitNumber = listBox.children[0].childElementCount;
 }
-
+//生成楼层排名
+const showOrder = () => {
+  var commitList = document.getElementsByClassName("list_box")[0].children[0].children
+  var length = commitList.length
+  let i = 1
+  for (i; i <= 200; i++) {
+    var orderDom = document.createElement("div")
+    orderDom.setAttribute("style", "margin-top: 24px;")
+    orderDom.textContent = i + "楼"
+    commitList[length - i].appendChild(orderDom)
+  }
+}
 const sendRequest = (i) => {
   chrome.runtime.sendMessage({ action: "updateTime", time: i });
 };
+
 // 事件和消息
 chrome.extension.onRequest.addListener(function (request, sender, cb) {
   // 触发不同的功能
@@ -114,6 +126,9 @@ chrome.extension.onRequest.addListener(function (request, sender, cb) {
       break;
     case "clearCommit":
       clearCommit();
+      break;
+    case 'showOrder':
+      showOrder();
       break;
     default:
       console.log("null action");
