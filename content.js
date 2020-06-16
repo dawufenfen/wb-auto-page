@@ -35,6 +35,11 @@ function handleBegin(cb) {
   if (!newGetMoreButton) {
     if (commitNumber > listBox.children[0].childElementCount) {
       continueRun(cb);
+    } else if (commitNumber === listBox.children[0].childElementCount) {
+      var lastChild = listBox.children[0].children[listBox.children[0].childElementCount - 1]
+      if (lastChild.className.includes("WB_empty")) {
+        continueRun(cb);
+      }
     } else {
       clearInterval(timeId);
       audio.play(); //播放提示音乐，如果不想播放，把这一行删除
@@ -94,10 +99,14 @@ const showOrder = () => {
   var length = commitList.length
   let i = 1
   for (i; i <= 200; i++) {
+    if (i > length) {
+      break;
+    }
+    var parent = commitList[length - i]
     var orderDom = document.createElement("div")
-    orderDom.setAttribute("style", "margin-top: 24px;")
-    orderDom.textContent = i + "楼"
-    commitList[length - i].appendChild(orderDom)
+    orderDom.setAttribute("style", "color: #aaa;")
+    orderDom.textContent = "下面是" + i + "楼"
+    parent.insertBefore(orderDom, parent.children[0])
   }
 }
 const sendRequest = (i) => {
