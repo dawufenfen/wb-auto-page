@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "大雾的微博自动翻沙发小插件",
   "manifest_version": 2,
-  "permissions": ["declarativeContent", "tabs"],
+  "permissions": ["declarativeContent"],
   "background": {
     "scripts": ["background.js"]
   },
