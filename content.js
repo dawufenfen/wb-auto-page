@@ -36,14 +36,15 @@ function handleBegin(cb) {
     if (commitNumber > listBox.children[0].childElementCount) {
       continueRun(cb);
     } else if (commitNumber === listBox.children[0].childElementCount) {
-      var lastChild = listBox.children[0].children[listBox.children[0].childElementCount - 1]
+      var lastChild =
+        listBox.children[0].children[listBox.children[0].childElementCount - 1];
       if (lastChild.className.includes("WB_empty")) {
         continueRun(cb);
       }
     } else {
       clearInterval(timeId);
-      audio.play(); //播放提示音乐，如果不想播放，把这一行删除
-      alert("找不到加载更多按钮，请看看是不是翻到沙发了");
+      audio.play().then(alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
+      //alert("找不到加载更多按钮，请看看是不是翻到沙发了");
     }
   } else {
     commitNumber = listBox.children[0].childElementCount;
@@ -95,20 +96,21 @@ function init() {
 }
 //生成楼层排名
 const showOrder = () => {
-  var commitList = document.getElementsByClassName("list_box")[0].children[0].children
-  var length = commitList.length
-  let i = 1
+  var commitList = document.getElementsByClassName("list_box")[0].children[0]
+    .children;
+  var length = commitList.length;
+  let i = 1;
   for (i; i <= 200; i++) {
     if (i > length) {
       break;
     }
-    var parent = commitList[length - i]
-    var orderDom = document.createElement("div")
-    orderDom.setAttribute("style", "color: #aaa;")
-    orderDom.textContent = "下面是" + i + "楼"
-    parent.insertBefore(orderDom, parent.children[0])
+    var parent = commitList[length - i];
+    var orderDom = document.createElement("div");
+    orderDom.setAttribute("style", "color: #aaa;");
+    orderDom.textContent = "下面是" + i + "楼";
+    parent.insertBefore(orderDom, parent.children[0]);
   }
-}
+};
 const sendRequest = (i) => {
   chrome.runtime.sendMessage({ action: "updateTime", time: i });
 };
@@ -136,7 +138,7 @@ chrome.extension.onRequest.addListener(function (request, sender, cb) {
     case "clearCommit":
       clearCommit();
       break;
-    case 'showOrder':
+    case "showOrder":
       showOrder();
       break;
     default:
