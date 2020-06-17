@@ -1,6 +1,6 @@
 {
   "name": "微博自动爬楼",
-  "version": "1.0",
+  "version": "1.1",
   "description": "大雾的微博自动翻沙发小插件",
   "manifest_version": 2,
   "permissions": ["declarativeContent"],

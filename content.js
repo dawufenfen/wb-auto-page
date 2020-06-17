@@ -39,6 +39,7 @@ function handleBegin(cb) {
       var lastChild =
         listBox.children[0].children[listBox.children[0].childElementCount - 1];
       if (lastChild.className.includes("WB_empty")) {
+        lastChild.remove()
         continueRun(cb);
       }
     } else {
