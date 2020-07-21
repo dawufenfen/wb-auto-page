@@ -39,16 +39,16 @@ function handleBegin(cb) {
       var lastChild =
         listBox.children[0].children[listBox.children[0].childElementCount - 1];
       if (lastChild.className.includes("WB_empty")) {
-        lastChild.remove()
+        lastChild.remove();
         continueRun(cb);
       } else {
         clearInterval(timeId);
-        audio.play().then(alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
+        audio.play().then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
         //alert("找不到加载更多按钮，请看看是不是翻到沙发了");
       }
     } else {
       clearInterval(timeId);
-      audio.play().then(alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
+      audio.play().then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
       //alert("找不到加载更多按钮，请看看是不是翻到沙发了");
     }
   } else {
