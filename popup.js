@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let stopButton = document.getElementById("stop");
   stopButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
+      // chrome.tabs.sendRequest(tab.id, { action: "exportFile" }, () => {});
       chrome.tabs.sendRequest(tab.id, { action: "stop" }, () => {});
     });
   };
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   //测试读取txt文件的内容
-  let importInput = document.getElementById("import");
+  let importInput = document.getElementById("importFile");
   importInput.onchange = (e) => {
     const file = importInput.files && importInput.files[0];
     var reader = new FileReader();
@@ -69,6 +70,15 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
     reader.readAsText(file);
+  };
+  
+  //测试导出txt文件的内容
+  let exportFileButton = document.getElementById("exportFile");
+  exportFileButton.onclick = () => {
+    chrome.tabs.getSelected(null, function (tab) {
+      console.log("this is onclick")
+      chrome.tabs.sendRequest(tab.id, { action: "exportFile" }, () => {});
+    });
   };
 
   chrome.runtime.onMessage.addListener(function (request, sender) {

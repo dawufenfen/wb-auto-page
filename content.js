@@ -43,12 +43,16 @@ function handleBegin(cb) {
         continueRun(cb);
       } else {
         clearInterval(timeId);
-        audio.play().then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
+        audio
+          .play()
+          .then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
         //alert("找不到加载更多按钮，请看看是不是翻到沙发了");
       }
     } else {
       clearInterval(timeId);
-      audio.play().then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
+      audio
+        .play()
+        .then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
       //alert("找不到加载更多按钮，请看看是不是翻到沙发了");
     }
   } else {
@@ -116,6 +120,27 @@ const showOrder = () => {
     parent.insertBefore(orderDom, parent.children[0]);
   }
 };
+//导出文件
+const exportFile = () => {
+  console.log("exportFile")
+  const filename = "hello.txt";
+  const text = "This is the content of my file :)";
+  var element = document.createElement("a");
+  element.setAttribute(
+    "href",
+    "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+  );
+  element.setAttribute("download", filename);
+
+  element.style.display = "none";
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+  console.log("exportFile end")
+};
+
 const sendRequest = (i) => {
   chrome.runtime.sendMessage({ action: "updateTime", time: i });
 };
@@ -145,6 +170,9 @@ chrome.extension.onRequest.addListener(function (request, sender, cb) {
       break;
     case "showOrder":
       showOrder();
+      break;
+     case "exportFile":
+      exportFile();
       break;
     default:
       console.log("null action");
