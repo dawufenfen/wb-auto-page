@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
       chrome.tabs.sendRequest(
         tab.id,
         { action: "begin", tabId: tab.id },
-        () => { }
+        () => {}
       );
     });
   };
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let stopButton = document.getElementById("stop");
   stopButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
-      chrome.tabs.sendRequest(tab.id, { action: "stop" }, () => { });
+      chrome.tabs.sendRequest(tab.id, { action: "stop" }, () => {});
     });
   };
 
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
       chrome.tabs.sendRequest(
         tab.id,
         { action: "continue", tabId: tab.id },
-        () => { }
+        () => {}
       );
     });
   };
@@ -32,30 +32,45 @@ document.addEventListener("DOMContentLoaded", function () {
   let reContinueButton = document.getElementById("reContinue");
   reContinueButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
-      chrome.tabs.sendRequest(tab.id, { action: "reContinue" }, () => { });
+      chrome.tabs.sendRequest(tab.id, { action: "reContinue" }, () => {});
     });
   };
 
   let clearCommitButton = document.getElementById("clearCommit");
   clearCommitButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
-      chrome.tabs.sendRequest(tab.id, { action: "clearCommit" }, () => { });
+      chrome.tabs.sendRequest(tab.id, { action: "clearCommit" }, () => {});
     });
   };
 
   let stopMusicButton = document.getElementById("stopMusic");
   stopMusicButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
-      chrome.tabs.sendRequest(tab.id, { action: "stopMusic" }, () => { });
+      chrome.tabs.sendRequest(tab.id, { action: "stopMusic" }, () => {});
     });
   };
 
   let showOrderButton = document.getElementById("showOrder");
   showOrderButton.onclick = () => {
     chrome.tabs.getSelected(null, function (tab) {
-      chrome.tabs.sendRequest(tab.id, { action: "showOrder" }, () => { });
+      chrome.tabs.sendRequest(tab.id, { action: "showOrder" }, () => {});
     });
   };
+
+  //测试读取txt文件的内容
+  let importInput = document.getElementById("import");
+  importInput.onchange = (e) => {
+    const file = importInput.files && importInput.files[0];
+    var reader = new FileReader();
+    reader.onload = function () {
+      if (reader.result) {
+        //显示文件内容
+        console.log("this is result", JSON.parse(reader.result));
+      }
+    };
+    reader.readAsText(file);
+  };
+
   chrome.runtime.onMessage.addListener(function (request, sender) {
     // 触发不同的功能
     if (request.action === "updateTime") {
