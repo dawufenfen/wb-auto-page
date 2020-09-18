@@ -6,6 +6,8 @@ var timeId;
 var stopFlag;
 var listBox;
 var commitNumber;
+var pageArr;
+var paginationArr;
 //清理评论
 function clearCommit() {
   var newContent = document.createElement("div");
@@ -23,6 +25,12 @@ function clearCommit() {
 }
 //获取数据的方法
 function getMore(newButton, cb) {
+  if (pageArr && newButton) {
+    var data = newButton.getAttribute("action-data");
+    if (pageArr.indexOf(data) === -1) {
+      pageArr.push(data);
+    }
+  }
   getMoreButton = newButton;
   i++;
   getMoreButton.click();
@@ -45,15 +53,13 @@ function handleBegin(cb) {
         clearInterval(timeId);
         audio
           .play()
-          .then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
-        //alert("找不到加载更多按钮，请看看是不是翻到沙发了");
+          .then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了"));
       }
     } else {
       clearInterval(timeId);
       audio
         .play()
-        .then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了")); //播放提示音乐，如果不想播放，把这一行删除，并去掉下面这行的头部的//
-      //alert("找不到加载更多按钮，请看看是不是翻到沙发了");
+        .then(() => alert("找不到加载更多按钮，请看看是不是翻到沙发了"));
     }
   } else {
     commitNumber = listBox.children[0].childElementCount;
@@ -65,16 +71,23 @@ function handleBegin(cb) {
 }
 //开始爬楼
 function begin(cb) {
+  pageArr = [];
   stopFlag = 0;
-  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  setTimeout(() => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }, 1000);
-  setTimeout(() => {
+  // window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  // setTimeout(() => {
+  //   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  // }, 1000);
+  checkPagination(() => {
+    handleBegin(cb);
     timeId = setInterval(() => {
       handleBegin(cb);
     }, 1000); //这里是设置每1000ms一次查询
-  }, 1000);
+  });
+  // setTimeout(() => {
+  //   timeId = setInterval(() => {
+  //     handleBegin(cb);
+  //   }, 1000); //这里是设置每1000ms一次查询
+  // }, 1000);
 }
 //恢复错误数据导致的爬楼错误
 function continueRun(cb) {
@@ -120,31 +133,80 @@ const showOrder = () => {
     parent.insertBefore(orderDom, parent.children[0]);
   }
 };
-//导出文件
+//导出分页数据文件
 const exportFile = () => {
-  console.log("exportFile")
-  const filename = "hello.txt";
-  const text = "This is the content of my file :)";
+  if (!pageArr || pageArr.length === 0) {
+    return;
+  }
+  const filename = "X年X月X日XXX微博的分页.txt";
+  const text =
+    `[
+"` +
+    pageArr.join(`",
+"`) +
+    `"
+]`;
+
+  //生成文件
   var element = document.createElement("a");
   element.setAttribute(
     "href",
     "data:text/plain;charset=utf-8," + encodeURIComponent(text)
   );
   element.setAttribute("download", filename);
-
   element.style.display = "none";
   document.body.appendChild(element);
-
   element.click();
-
   document.body.removeChild(element);
-  console.log("exportFile end")
 };
 
 const sendRequest = (i) => {
   chrome.runtime.sendMessage({ action: "updateTime", time: i });
 };
+//导入分页数据，记录
+const importPagination = (pagination) => {
+  paginationArr = pagination;
+};
+//跳转分页
+const jumpPagination = (page) => {
+  if (page && paginationArr) {
+    const pageLength = paginationArr.length;
+    const actionData = paginationArr[pageLength - page];
+    if (actionData) {
+      //生成加载页面的按钮
+      init();
+      stop();
+      checkPagination(() => {
+        var pageButton = document.getElementsByClassName("WB_cardmore")[0];
+        pageButton.setAttribute("action-data", actionData);
+        clearCommit();
+        listBox.children[0].appendChild(pageButton);
+        pageButton.click();
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      });
+    }
+  }
+};
 
+function checkPagination(cb) {
+  var buttonList = document.getElementsByClassName("WB_cardmore");
+  if (!buttonList || buttonList.length === 0) {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    var scrollTimer = setTimeout(() => {
+      window.clearTimeout(scrollTimer);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 1000);
+    var cbTimer = setTimeout(() => {
+      window.clearTimeout(cbTimer);
+      cb();
+    }, 2000);
+  } else {
+    cb && cb();
+  }
+}
 // 事件和消息
 chrome.extension.onRequest.addListener(function (request, sender, cb) {
   // 触发不同的功能
@@ -171,8 +233,14 @@ chrome.extension.onRequest.addListener(function (request, sender, cb) {
     case "showOrder":
       showOrder();
       break;
-     case "exportFile":
+    case "exportFile":
       exportFile();
+      break;
+    case "importPagination":
+      importPagination(request.data);
+      break;
+    case "jumpPagination":
+      jumpPagination(request.data);
       break;
     default:
       console.log("null action");

@@ -28,6 +28,9 @@
 
         #begin {
             font-size: 16px;
+        }
+
+        .primary_button {
             color: #fff;
             background: #1890ff;
             border-color: #1890ff;
@@ -36,32 +39,68 @@
             box-shadow: 0 2px 0 rgba(0, 0, 0, .045);
         }
 
-        #begin:hover,
-        #begin:active,
-        #begin:focus {
+        .primary_button:hover,
+        .primary_button:active,
+        .primary_button:focus {
             color: #fff;
             background: #40a9ff;
             border-color: #40a9ff;
+        }
+
+        .dividing {
+            width: 100%;
+            border-bottom: 1px solid #ccc;
+            margin: 6px 0 10px;
+        }
+
+        .label {
+            margin-left: 6px;
+        }
+
+        .file_input {
+            margin: 4px 4px 10px;
+        }
+
+        #importFile {
+            width: 100%;
+        }
+
+        #pagination {
+            display: none;
+        }
+
+        #paginationInput {
+            margin-left: 6px;
+            width: 100px;
         }
     </style>
 </head>
 
 <body>
     <div class="wrap">
-        <div id="content"></div>
-        <div>
-            <button id="begin">开始</button>
-            <button id="stop">暂停</button>
-            <button id="continue">继续</button>
+        <div id="baseOption">
+            <div id="content"></div>
+            <div>
+                <button id="begin" class="primary_button">开始</button>
+                <button id="stop">暂停</button>
+                <button id="continue">继续</button>
+            </div>
+            <div>
+                <button id="reContinue">不是沙发，继续爬</button>
+            </div>
+            <div> <button id="clearCommit">清理现有的评论</button>
+            </div>
+            <div><button id="stopMusic">停止音乐</button><button id="showOrder">显示楼层序号</button></div>
+            <div class="dividing"> </div>
         </div>
-        <div>
-            <button id="reContinue">不是沙发，继续爬</button>
+        <div></span><button id="exportFile">导出分页</button></div>
+        <div class="label">导入分页：</div>
+        <div class="file_input"><input type="file" id="importFile" name="avatar" accept=".json, .txt" placeholder="导入分页数据" /></div>
+        <div id="pagination">
+            <div class="dividing"> </div>
+            <div class="label" id="paginationLabel"></div>
+            <input type="number" placeholder="请输入页码" id="paginationInput" /><button id="jumpPage" class="primary_button">跳转</button>
         </div>
-        <div> <button id="clearCommit">清理现有的评论</button>
-        </div>
-        <div><button id="stopMusic">停止音乐</button><button id="showOrder">显示楼层序号</button></div>
-        <div><input type="file" id="importFile" name="avatar" accept=".json, .txt" placeholder="导入分页数据" /></div>
-        <div><button id="exportFile">导出分页数据</button></div>
         <script src="popup.js"></script>
     </div>
 </body>
