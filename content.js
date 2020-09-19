@@ -6,20 +6,22 @@ var timeId;
 var stopFlag;
 var listBox;
 var commitNumber;
-var pageArr;
+var pageArr = [];
 var paginationArr;
 //清理评论
-function clearCommit() {
+function clearCommit(ignoreGetMore = false) {
   var newContent = document.createElement("div");
   var getMoreButton = document.getElementsByClassName("WB_cardmore")[0];
-  if (!getMoreButton) {
+  if (!getMoreButton && !ignoreGetMore) {
     console.log("请重新输入一次clearCommit()");
     return;
   }
   newContent.setAttribute("node-type", "comment_list");
   newContent.setAttribute("class", "list_ul");
   listBox.removeChild(listBox.children[0]);
-  newContent.appendChild(getMoreButton);
+  if (!ignoreGetMore) {
+    newContent.appendChild(getMoreButton);
+  }
   listBox.appendChild(newContent);
   console.log("清理完成");
 }
@@ -71,7 +73,6 @@ function handleBegin(cb) {
 }
 //开始爬楼
 function begin(cb) {
-  pageArr = [];
   stopFlag = 0;
   // window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   // setTimeout(() => {
@@ -169,23 +170,33 @@ const importPagination = (pagination) => {
 };
 //跳转分页
 const jumpPagination = (page) => {
+  if (!getMoreButton) {
+    checkPagination(() => {
+      init()
+      jumpAction(page)
+
+    })
+  } else {
+    jumpAction(page)
+
+  }
+
+};
+function jumpAction(page) {
   if (page && paginationArr) {
     const pageLength = paginationArr.length;
     const actionData = paginationArr[pageLength - page];
     if (actionData) {
       //生成加载页面的按钮
-      init();
       stop();
-      checkPagination(() => {
-        var pageButton = document.getElementsByClassName("WB_cardmore")[0];
-        pageButton.setAttribute("action-data", actionData);
-        clearCommit();
-        listBox.children[0].appendChild(pageButton);
-        pageButton.click();
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
+      clearCommit(true);
+      var pageButton = getMoreButton;
+      pageButton.setAttribute("action-data", actionData);
+      listBox.children[0].appendChild(pageButton);
+      pageButton.click();
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
       });
     }
   }
